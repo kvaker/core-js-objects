@@ -32,8 +32,16 @@ function shallowCopy(obj) {
  *    mergeObjects([{a: 1, b: 2}, {b: 3, c: 5}]) => {a: 1, b: 5, c: 5}
  *    mergeObjects([]) => {}
  */
-function mergeObjects(/* objects */) {
-  throw new Error('Not implemented');
+function mergeObjects(objects) {
+  const result = {};
+
+  objects.forEach((obj) => {
+    Object.entries(obj).forEach(([key, value]) => {
+      result[key] = (result[key] || 0) + value;
+    });
+  });
+
+  return result;
 }
 
 /**
@@ -88,8 +96,8 @@ function compareObjects(obj1, obj2) {
  *    isEmptyObject({}) => true
  *    isEmptyObject({a: 1}) => false
  */
-function isEmptyObject(/* obj */) {
-  throw new Error('Not implemented');
+function isEmptyObject(obj) {
+  return Object.keys(obj).length === 0;
 }
 
 /**
@@ -123,13 +131,19 @@ function makeImmutable(obj) {
  *    makeWord({ H:[0], e: [1], l: [2, 3, 8], o: [4, 6], W:[5], r:[7], d:[9]}) => 'HelloWorld'
  */
 function makeWord(lettersObject) {
-  const sortedLetters = Object.entries(lettersObject).sort(
-    (a, b) => a[1][0] - b[1][0]
-  );
-  return sortedLetters.reduce(
-    (word, [letter, positions]) => word + letter.repeat(positions.length),
-    ''
-  );
+  let word = '';
+  Object.keys(lettersObject).forEach((letter) => {
+    if (Object.prototype.hasOwnProperty.call(lettersObject, letter)) {
+      const positions = lettersObject[letter];
+      positions.forEach((position) => {
+        const repeatCount = position + 1 - word.length;
+        if (repeatCount > 0) {
+          word += letter.repeat(repeatCount);
+        }
+      });
+    }
+  });
+  return word;
 }
 
 /**
